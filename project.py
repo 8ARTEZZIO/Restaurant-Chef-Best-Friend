@@ -1,6 +1,6 @@
 from main_functions import start_program, add_item, remove_item, exit_program, surprise_me
 
-FILE_PATH = "starbucks_data.json" # choose a dataset to read from
+FILE_PATH = "data.json" # choose a dataset to read from
 
 def main():
     """
