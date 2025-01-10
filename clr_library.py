@@ -1,5 +1,5 @@
 from colorama import Fore, Style
-from tabulate import tabulate
+from tabulate import tabulate # type: ignore
 
 # All accessible colors in colorama and additional colors from the provided database
 colors = {

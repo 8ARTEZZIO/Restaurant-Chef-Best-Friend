@@ -1,4 +1,8 @@
 # RESTAURANT'S CHEF BEST FRIEND
+<<<<<<< HEAD
+=======
+#### Video Demo: https://www.youtube.com/watch?v=rt3u0APaAYU
+>>>>>>> 02989de (Save current work before normalizing)
 #### Description:
 Have you ever thought about becoming a professional chef?
 Well... maybe I can't help with that, but I can make you nearly as good as the real thing!

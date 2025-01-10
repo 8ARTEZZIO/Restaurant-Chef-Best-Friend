@@ -1,7 +1,7 @@
 from colorama import Fore, Style, init
-from rapidfuzz import fuzz, process
-from tabulate import tabulate
-import inflect
+from rapidfuzz import fuzz, process # type: ignore
+from tabulate import tabulate # type: ignore
+import inflect # type: ignore
 import re
 import json
 init()
@@ -12,30 +12,29 @@ def load_data(display_on, file_path):
     Returns it as a dictionary
     """
     try:
-        with open(file_path, "r") as data_file:
+        with open(file_path, "r", encoding="utf-8") as data_file:
             data = json.load(data_file)
     except (json.decoder.JSONDecodeError, FileNotFoundError):
         data = {}
-        with open(file_path, "w") as data_file:
-            data = json.dump(ingredients_data, data_file, indent=4)
-        # data = json.load(data)
+        with open(file_path, "w", encoding="utf-8") as data_file:
+            data = json.dump(data, data_file, indent=4)
 
     # translate data into a list of keys
-    ing = [x for x in data]
+    data_keys = list(data.keys())
 
     if display_on:
         table = []
 
-        for i in range(0, len(ing), 4):
-            row = [Fore.GREEN + item + Style.RESET_ALL for item in ing[i: i+4]]
+        for i in range(0, len(data_keys), 4):
+            row = [Fore.GREEN + item + Style.RESET_ALL for item in data_keys[i: i+4]]
             table.append(row)
 
         print(tabulate(table, tablefmt="fancy_grid"))
 
-    return data, ing
+    return data, data_keys
 
 
-def save_data(new_data, file_path="data.json"):
+def save_data(new_data, file_path):
     try:
         with open(file_path, "r") as data_file:
             data = json.load(data_file)
@@ -95,15 +94,17 @@ def ai_input(choices, user_input, capitalized, test_on, threshold=60):
 
             if close_matches:
 
-                user_input_close_matches = input(f"Choose max {len(close_matches)} [{s}n]:\n{'\n'.join(close_matches)}\n")
-                u_inp = user_input_close_matches
+                s = "\\".join(str(i + 1) for i in range(len(close_matches))) + "\\n"
+                prompt = "Choose max " + str(len(close_matches)) + f" [{s}]:\n" + "\n".join(close_matches) + "\n"
+                user_input_close_matches = input(prompt)
 
-                if "n" not in u_inp:
+                if "n" not in user_input_close_matches: # avoid casting a letter 'n' to integer
+                    u_inp = [int(i) for i in user_input_close_matches]
 
-                    if u_inp in s and len(u_inp) == 1:
-                        return False, [close_matches[int(u_inp)-1]]
-
-                    elif all([int(letter).is_integer() for letter in list(u_inp) if letter in s]) and len(u_inp) <= LIMIT:
+                    if len(u_inp) == 1 and str(u_inp[0]) in s:
+                        return False, [close_matches[u_inp[0]-1]]
+                    
+                    elif all([isinstance(x, int) for x in u_inp if str(x) in s]) and len(u_inp) <= LIMIT:
 
                         nums = []
                         for i in list(u_inp):

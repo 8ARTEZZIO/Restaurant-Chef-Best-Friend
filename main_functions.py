@@ -1,22 +1,23 @@
 from data_utils import load_data, save_data, ai_input, user_input_to_data
 from emoji_library import emojis, display_emojis_tab
 from clr_library import colors, display_clr_tab
+from random import choice, randint
 import json
 import sys
 
 
-def start_program():
+def start_program(file_path="data.json"):
     display_items = False
 
     if input("\nDisplay items? [y/n] ").lower().startswith("y"):
         display_items = True
 
-    data, ingredients_names = load_data(display_items, "data.json")
+    data, data_keys = load_data(display_items, file_path)
 
     while True:
         user = input("\nMain ingredients: ")
         # leave 'False' as it is; (it's for test purposes)
-        result = ai_input(ingredients_names, user, capitalized=True, test_on=False, threshold=60)
+        result = ai_input(data_keys, user, capitalized=True, test_on=False, threshold=60)
 
         if not result:
             pass
@@ -31,19 +32,19 @@ def start_program():
                 break
 
 
-def add_item():
+def add_item(file_path="data.json"):
     """
     This function adds the new item to the dataset.
     """
     emoji_list = [_ for _ in emojis] # the list of emoji keys
     color_list = [_ for _ in colors]
-    data, ingredients_names = load_data(False, "new_data.json")
+    data, data_keys = load_data(False, file_path)
     new_ingr = {} # the root of the dictionary
 
     while True:
         ingr_name = input("\nThe main ingredient name: ").title()
         if ingr_name != "":
-            if ingr_name not in ingredients_names:
+            if ingr_name not in data_keys:
                 new_ingr[ingr_name] = {} # the main ingr name
                 break
             else:
@@ -149,14 +150,14 @@ def remove_item(file_path="data.json"):
             continue
 
     # load the current data
-    data, ingredients_names = load_data(display_on, file_path)
+    data, data_keys = load_data(display_on, file_path)
 
     while True:
 
         user_remove_item = input("Choose item to remove: ")
         while True:
             try:
-                suggestion = ai_input(ingredients_names, user_remove_item, capitalized=True, test_on=False, threshold=60)
+                suggestion = ai_input(data_keys, user_remove_item, capitalized=True, test_on=False, threshold=60)
                 break
             except IndexError:
                 print("Wrong input. Try again.")
@@ -180,6 +181,20 @@ def remove_item(file_path="data.json"):
             continue
 
 
-def exit_program():
+def surprise_me(file_path):
+    print("Not ready yet")
+    data, data_keys = load_data(False, file_path)
+    # find from 2 to 5 random items and rem. duplicates
+    temp_list = list(set([choice(data_keys) for x in range(randint(2,5))]))
+    # print(temp_list)
+    for i in range(0, len(temp_list)):
+        if i+1 < len(temp_list):
+            for n in temp_list[i: i+2]:
+                print(n, list(data[n].keys())[2:])
+        print("")
+        # print(list(data[i].keys())[2:])
+
+
+def exit_program(file_path):
     print("Exiting program...")
     sys.exit()
