@@ -6,7 +6,7 @@ import json
 import sys
 
 
-def start_program(file_path="data.json"):
+def start_program(file_path):
     display_items = False
 
     if input("\nDisplay items? [y/n] ").lower().startswith("y"):
@@ -32,7 +32,7 @@ def start_program(file_path="data.json"):
                 break
 
 
-def add_item(file_path="data.json"):
+def add_item(file_path):
     """
     This function adds the new item to the dataset.
     """
@@ -132,10 +132,10 @@ def add_item(file_path="data.json"):
             print("Invalid Input. It can\'t be an empty string.")
             continue
 
-    save_data(new_ingr)
+    save_data(new_ingr, file_path)
 
 
-def remove_item(file_path="data.json"):
+def remove_item(file_path):
     print("Removing Assistant")
     while True:
         var = input("Display items? [y/n] ").lower()[0]
